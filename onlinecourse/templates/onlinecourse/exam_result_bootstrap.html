@@ -38,17 +38,24 @@
 <div class="container-fluid">
     {% if grade > 80 %}
     <div class="alert alert-success">
-       <!--HINT Display passed info -->
+        <bold>Congratulations, {{user}}!</bold> You passed exam with score  {{score}} / {{total}}
     </div>
         {% else %}
         <div class="alert alert-danger">
-            <!--HINT Display failed info -->
+            <bold>Failed</bold> Sorry, {{user}}! You failed exam with score {{score}} / {{total}}
         </div>
+        
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
+        
         {% endif %}
         <div class="card-columns-vertical mt-1">
         <h5 class="">Exam results</h5>
-            <!--HINT Display exam results-->
+            {% for question in course.question_set.all %}
+                <div class="card mt-1">
+                    <div class="card-header"><h5>{{ question.question_text}}</h5></div>
+                    {% csrf_token %}
+                </div>
+            {% endfor %}
         </div>
     </div>
 </body>
