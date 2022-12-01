@@ -44,9 +44,7 @@
         <div class="alert alert-danger">
             <bold>Failed</bold> Sorry, {{user}}! You failed exam with score {{score}} / {{total}}
         </div>
-        
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
-        
         {% endif %}
         <div class="card-columns-vertical mt-1">
         <h5 class="">Exam results</h5>
@@ -54,6 +52,33 @@
                 <div class="card mt-1">
                     <div class="card-header"><h5>{{ question.question_text}}</h5></div>
                     {% csrf_token %}
+                    <div class="form-group">
+                        {% for choice in question.choice_set.all %}
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                {% if choice in  choices %}
+                                    {% if choice.is_correct %}
+                                        <p class="text-success">
+                                            <input type="checkbox" name="choice_{{choice.id}}"
+                                                class="form-check-input" id="{{choice.id}}"
+                                                value="{{choice.id}}" checked="yes">{{ choice.content }}
+                                        </p>
+                                    {%else%}
+                                        <p class="text-danger">
+                                            <input type="checkbox" name="choice_{{choice.id}}"
+                                                class="form-check-input" id="{{choice.id}}"
+                                                value="{{choice.id}}" checked="yes">{{ choice.content }}
+                                        </p>
+                                    {% endif %}
+                                {%else%}
+                                <input type="checkbox" name="choice_{{choice.id}}"
+                                    class="form-check-input" id="{{choice.id}}"
+                                    value="{{choice.id}}">{{ choice.content }}
+                                {% endif %}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             {% endfor %}
         </div>

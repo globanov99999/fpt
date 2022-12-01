@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-# <HINT> Import any new Models here
 from .models import Course, Enrollment, Question, Choice, Submission
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
@@ -8,9 +7,9 @@ from django.urls import reverse
 from django.views import generic
 from django.contrib.auth import login, logout, authenticate
 import logging
-# Get an instance of a logger
+
 logger = logging.getLogger(__name__)
-# Create your views here.
+
 
 
 def registration_request(request):
@@ -18,7 +17,6 @@ def registration_request(request):
     if request.method == 'GET':
         return render(request, 'onlinecourse/user_registration_bootstrap.html', context)
     elif request.method == 'POST':
-        # Check if user exists
         username = request.POST['username']
         password = request.POST['psw']
         first_name = request.POST['firstname']
@@ -133,18 +131,19 @@ def extract_answers(request):
 
 def show_exam_result(request, course_id, submission_id):
     course = Course.objects.get(pk=course_id)
-    choices = Choice.objects.filter(submission=submission_id)
+    questions = Question.objects.filter(cources=course_id)
+    
     score=total=0
-    for ccc in choices:
-        qqq = Question.objects.filter(choice_set=ccc.id)[0]
+    for qqq in questions:
+        choices = Choice.objects.filter(submission=submission_id, question=qqq.id)
         total+=qqq.grade_point
-        if ccc.is_correct:
+        if qqq.is_get_score(choices):
             score+=qqq.grade_point
     
     grade = int(score*100/total)
 
-    context={
-            'course': course,
+    choices = Choice.objects.filter(submission=submission_id)
+    context={'course': course,
             'choices': choices,
             'total':total,
             'score':score,

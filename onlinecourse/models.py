@@ -101,12 +101,12 @@ class Question(models.Model):
     choice_set = models.ManyToManyField(Choice)
 
     def is_get_score(self, selected_ids):
-       all_answers = self.choice_set.filter(is_correct=True).count()
-       selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
-       if all_answers == selected_correct:
-           return True
-       else:
-           return False
+        all_correct = sorted(self.choice_set.filter(is_correct=True), key=id)
+        selected = sorted(self.choice_set.filter(id__in=selected_ids), key=id)
+        if all_correct == selected:
+            return True
+        else:
+            return False
 
 
 class Submission(models.Model):
